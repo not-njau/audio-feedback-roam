@@ -1,0 +1,35 @@
+(ns audio-feedback.core
+  (:require [audio-feedback.config :as config]
+            [audio-feedback.engine :as engine]
+            [audio-feedback.loop :as aloop]
+            [audio-feedback.commands :as commands]))
+
+(defn ensure-audio-active! []
+  (let [handler (fn activate []
+                  (when-let [ctx (.-coderAudioContext js/window)]
+                    (when (= (.-state ctx) "suspended")
+                      (.resume ctx)))
+                  (.removeEventListener js/window "click" activate)
+                  (.removeEventListener js/window "keydown" activate))]
+    (.addEventListener js/window "click" handler)
+    (.addEventListener js/window "keydown" handler)))
+
+(def default-entry
+  #js {:onload (fn [args]
+                 (let [api (.-extensionAPI args)]
+                   (js/console.log "🎧 Audio Feedback: Loading extension...")
+                   (reset! config/extension-api api)
+                   (config/register-settings! api)
+                   (commands/register-commands! api)
+                   (aloop/start-master-loop!)
+                   (ensure-audio-active!)
+                   (js/console.log "✅ Audio Feedback: Loaded successfully.")))
+
+       :onunload (fn []
+                   (js/console.log "🎧 Audio Feedback: Unloading...")
+                   (aloop/stop-master-loop!)
+                   (when-let [ctx (.-coderAudioContext js/window)]
+                     (.close ctx)
+                     (set! (.-coderAudioContext js/window) nil))
+                   (reset! config/extension-api nil)
+                   (js/console.log "✅ Audio Feedback: Unloaded successfully."))})

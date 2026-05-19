@@ -1,0 +1,51 @@
+(ns audio-feedback.themes)
+
+(def zen-theme
+{:todo-done    {:technique :fm-bell :carrier-freq 600 :mod-freq 150
+            :mod-index 0.1 :duration 1.25 :vol 0.3}
+:collapse     {:technique :freq-sweep :start-freq 396 :end-freq 280
+            :shape "sine" :duration 0.3 :vol 0.3}
+:expand       {:technique :freq-sweep :start-freq 280 :end-freq 396
+            :shape "sine" :duration 0.3 :vol 0.3}
+:indent       {:technique :standard :freq 330 :shape "sine"
+            :duration 0.5 :vol 0.3}
+:outdent      {:technique :standard :freq 440 :shape "sine"
+            :duration 0.5 :vol 0.3}
+:navigate     {:technique :layered :freq1 60 :freq2 50 :shape "sine"
+            :duration 0.3 :vol1 0.3 :vol2 0.3}
+:sidebar-open {:technique :standard :freq 120 :shape "sine"
+            :duration 0.3 :vol 0.3}})
+
+(def retro-theme
+{:todo-done    {:technique :standard :freq 440 :shape "square"
+            :duration 0.4 :vol 0.3}
+:collapse     {:technique :freq-sweep :start-freq 330 :end-freq 220
+            :shape "square" :duration 0.25 :vol 0.3}
+:expand       {:technique :freq-sweep :start-freq 220 :end-freq 330
+            :shape "square" :duration 0.25 :vol 0.3}
+:indent       {:technique :freq-sweep :start-freq 650 :end-freq 230
+            :shape "square" :duration 0.2 :vol 0.3}
+:outdent      {:technique :freq-sweep :start-freq 230 :end-freq 650
+            :shape "square" :duration 0.2 :vol 0.3}
+:navigate     {:technique :two-tone-seq :freq1 330 :freq2 494
+            :shape "square" :duration 0.05 :vol 0.3}
+:sidebar-open {:technique :standard :freq 523 :shape "square"
+            :duration 0.06 :vol 0.3}})
+
+(def halo-theme
+{:todo-done    {:technique :dual-fm-bell :carrier-freq 1000 :mod-freq 1000
+            :mod-index 0.1 :duration 1 :vol 0.3}
+:collapse     {:technique :bell :freq 330 :shape "sine"
+            :duration 0.4 :vol 0.3}
+:expand       {:technique :bell :freq 440 :shape "sine"
+            :duration 0.4 :vol 0.3}
+:indent       {:technique :freq-sweep :start-freq 440 :end-freq 550
+            :shape "sine" :duration 0.2 :vol 0.3}
+:outdent      {:technique :freq-sweep :start-freq 330 :end-freq 220
+            :shape "sine" :duration 0.2 :vol 0.3}
+:navigate     {:technique :layered :freq1 660 :freq2 770 :shape "sine"
+            :duration 0.25 :vol1 0.3 :vol2 0.3}
+:sidebar-open {:technique :freq-sweep :start-freq 880 :end-freq 1100
+            :shape "sine" :duration 0.08 :vol 0.3}})
+
+(def themes {:zen zen-theme :retro retro-theme :halo halo-theme})

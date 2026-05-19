@@ -1,0 +1,7 @@
+{
+"name": "audio-feedback",
+"version": "0.0.1",
+"dependencies": {
+"shadow-cljs": "2.26.2"
+}
+}
