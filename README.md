@@ -121,3 +121,7 @@ If you enjoy this extension and want to support my work, consider subscribing to
 
 If this extension has made your Roam workflow a little more satisfying, consider supporting its development:
 [![Ko-fi](https://img.shields.io/badge/Support%20me%20on-Ko--fi-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/williamnjau)
+
+## License
+
+MIT License — see [LICENSE](LICENSE) for details.
