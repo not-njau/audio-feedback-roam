@@ -1,35 +1,45 @@
 (ns audio-feedback.core
 (:require [audio-feedback.config :as config]
-[audio-feedback.engine :as engine]
-[audio-feedback.loop :as aloop]
-[audio-feedback.commands :as commands]))
+      [audio-feedback.engine :as engine]
+      [audio-feedback.loop :as aloop]
+      [audio-feedback.commands :as commands]))
+
+(defonce audio-unlock-handler (atom nil))
 
 (defn ensure-audio-active! []
 (let [handler (fn activate []
-  (when-let [ctx (.-coderAudioContext js/window)]
-    (when (= (.-state ctx) "suspended")
-      (.resume ctx)))
-  (.removeEventListener js/window "click" activate)
-  (.removeEventListener js/window "keydown" activate))]
+            (when-let [ctx (.-coderAudioContext js/window)]
+              (when (= (.-state ctx) "suspended")
+                (.resume ctx)))
+            (.removeEventListener js/window "click" activate)
+            (.removeEventListener js/window "keydown" activate))]
+(reset! audio-unlock-handler handler)
 (.addEventListener js/window "click" handler)
 (.addEventListener js/window "keydown" handler)))
 
+(defn remove-audio-listeners! []
+(when-let [handler @audio-unlock-handler]
+(.removeEventListener js/window "click" handler)
+(.removeEventListener js/window "keydown" handler)
+(reset! audio-unlock-handler nil)))
+
 (def default-entry
 #js {:onload (fn [args]
- (let [api (.-extensionAPI args)]
-   (js/console.log "🎧 Audio Feedback: Loading extension...")
-   (reset! config/extension-api api)
-   (config/register-settings!)
-   (commands/register-commands! api)
-   (aloop/start-master-loop!)
-   (ensure-audio-active!)
-   (js/console.log "✅ Audio Feedback: Loaded successfully.")))
+           (let [api (.-extensionAPI args)]
+             (js/console.log "🎧 Audio Feedback: Loading extension...")
+             (reset! config/extension-api api)
+             (config/register-settings!)
+             (commands/register-commands! api)
+             (aloop/start-master-loop!)
+             (ensure-audio-active!)
+             (js/console.log "✅ Audio Feedback: Loaded successfully.")))
 
-:onunload (fn []
-   (js/console.log "🎧 Audio Feedback: Unloading...")
-   (aloop/stop-master-loop!)
-   (when-let [ctx (.-coderAudioContext js/window)]
-     (.close ctx)
-     (set! (.-coderAudioContext js/window) nil))
-   (reset! config/extension-api nil)
-   (js/console.log "✅ Audio Feedback: Unloaded successfully."))})
+ :onunload (fn []
+             (js/console.log "🎧 Audio Feedback: Unloading...")
+             (remove-audio-listeners!)
+             (aloop/stop-master-loop!)
+             (when-let [ctx (.-coderAudioContext js/window)]
+               (.close ctx)
+               (set! (.-coderAudioContext js/window) nil))
+             (reset! config/extension-api nil)
+             (js/console.log "✅ Audio Feedback: Unloaded successfully."))})
