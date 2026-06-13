@@ -7,4 +7,4 @@ npm install
 echo "Building extension..."
 npx shadow-cljs release :extension
 
-echo "Build complete. Output: release/extension.js"
+echo "Build complete. Output: extension.js"
